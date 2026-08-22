@@ -1,6 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST_ERROR_CODE,
+  FORBIDDEN_ERROR_CODE,
   NOT_FOUND_ERROR_CODE,
   DEFAULT_ERROR_CODE,
 } = require("../utils/errors");
@@ -37,9 +38,16 @@ module.exports.createClothingItem = (req, res) => {
 module.exports.deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
-    .then((item) => res.send(item))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id) {
+        return res
+          .status(FORBIDDEN_ERROR_CODE)
+          .send({ message: "You can only delete your own items" });
+      }
+      return item.deleteOne().then(() => res.send(item));
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const userRouter = require("./routes/users");
 const itemRouter = require("./routes/clothingItems");
+const { login, createUser } = require("./controllers/users");
 const {
   NOT_FOUND_ERROR_CODE,
   BAD_REQUEST_ERROR_CODE,
@@ -21,14 +23,11 @@ mongoose
     console.error(err);
   });
 
+app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6a885f83272636504f8dd963", // paste the _id of the test user created in the previous step
-  };
-  next();
-});
+app.post("/signin", login);
+app.post("/signup", createUser);
 
 app.use("/users", userRouter);
 app.use("/items", itemRouter);

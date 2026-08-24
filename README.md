@@ -45,6 +45,4 @@ All 102 requests in the Sprint 13 Postman test suite (authentication and authori
 ![Postman test suite results: 102 of 102 tests passed](./docs/postman-tests-sprint13.png)
 
 ## Project Pitch Video
-[Video coming soon — recording in progress]
-
-<!-- Replace with the Sprint 15 pitch video covering the full-stack project (frontend + backend) before submitting for review. -->
+Check out [this video](https://drive.google.com/file/d/1lZH8a7jVh3vafDKBt4SK0Cn5HxDfQA39/view?usp=sharing), where I describe my full-stack project, frontend and backend, and some challenges I faced while building it.

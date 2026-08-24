@@ -3,21 +3,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const {
-  BAD_REQUEST_ERROR_CODE,
-  UNAUTHORIZED_ERROR_CODE,
-  NOT_FOUND_ERROR_CODE,
-  CONFLICT_ERROR_CODE,
-  DEFAULT_ERROR_CODE,
-} = require("../utils/errors");
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+} = require("../errors");
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
-
-  if (!password) {
-    return res
-      .status(BAD_REQUEST_ERROR_CODE)
-      .send({ message: "Invalid data passed for creating a user" });
-  }
 
   return bcrypt
     .hash(password, 10)
@@ -28,31 +21,20 @@ module.exports.createUser = (req, res) => {
       res.send(userObject);
     })
     .catch((err) => {
-      console.error(err);
       if (err.code === 11000) {
-        return res
-          .status(CONFLICT_ERROR_CODE)
-          .send({ message: "A user with this email already exists" });
+        return next(new ConflictError("A user with this email already exists"));
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid data passed for creating a user" });
+        return next(
+          new BadRequestError("Invalid data passed for creating a user")
+        );
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res
-      .status(BAD_REQUEST_ERROR_CODE)
-      .send({ message: "Email and password are required" });
-  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -62,64 +44,47 @@ module.exports.login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(UNAUTHORIZED_ERROR_CODE)
-          .send({ message: "Incorrect email or password" });
+        return next(new UnauthorizedError("Incorrect email or password"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => res.send(user))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND_ERROR_CODE)
-          .send({ message: "User not found" });
+        return next(new NotFoundError("User not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid user ID" });
+        return next(new BadRequestError("Invalid user ID"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(
     req.user._id,
     { name, avatar },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .orFail()
     .then((user) => res.send(user))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND_ERROR_CODE)
-          .send({ message: "User not found" });
+        return next(new NotFoundError("User not found"));
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid data passed for updating the profile" });
+        return next(
+          new BadRequestError("Invalid data passed for updating the profile")
+        );
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };

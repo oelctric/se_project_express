@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -5,10 +7,12 @@ const userRouter = require("./routes/users");
 const itemRouter = require("./routes/clothingItems");
 const { login, createUser } = require("./controllers/users");
 const {
-  NOT_FOUND_ERROR_CODE,
-  BAD_REQUEST_ERROR_CODE,
-  DEFAULT_ERROR_CODE,
-} = require("./utils/errors");
+  validateLogin,
+  validateCreateUser,
+} = require("./middlewares/validation");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+const errorHandler = require("./middlewares/error-handler");
+const NotFoundError = require("./errors/not-found-error");
 
 const { PORT = 3001 } = process.env;
 
@@ -26,29 +30,26 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.use(requestLogger);
+
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
+app.post("/signin", validateLogin, login);
+app.post("/signup", validateCreateUser, createUser);
 
 app.use("/users", userRouter);
 app.use("/items", itemRouter);
 
-app.use((req, res) => {
-  res
-    .status(NOT_FOUND_ERROR_CODE)
-    .send({ message: "Requested resource not found" });
+app.use((req, res, next) => {
+  next(new NotFoundError("Requested resource not found"));
 });
 
-app.use((err, req, res, next) => {
-  if (err.type === "entity.parse.failed") {
-    return res
-      .status(BAD_REQUEST_ERROR_CODE)
-      .send({ message: "Invalid JSON in request body" });
-  }
-  console.error(err);
-  return res
-    .status(DEFAULT_ERROR_CODE)
-    .send({ message: "An error has occurred on the server." });
-});
+app.use(errorLogger);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);

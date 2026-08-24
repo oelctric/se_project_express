@@ -2,8 +2,8 @@
 The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
 
 ## Live Project
-- Domain: [closetforecast-oy.crabdance.com](http://closetforecast-oy.crabdance.com)
-- API: [api.closetforecast-oy.crabdance.com](http://api.closetforecast-oy.crabdance.com)
+- Domain: [closetforecast-oy.jumpingcrab.com](https://closetforecast-oy.jumpingcrab.com)
+- API: [api.closetforecast-oy.jumpingcrab.com](https://api.closetforecast-oy.jumpingcrab.com)
 - Front-end repo: [se_project_react](https://github.com/oelctric/se_project_react)
 
 ## Functionality

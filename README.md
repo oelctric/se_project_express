@@ -1,6 +1,11 @@
 # WTWR (What to Wear?): Back End
 The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
 
+## Live Project
+- Domain: [closetforecast-oy.crabdance.com](http://closetforecast-oy.crabdance.com)
+- API: [api.closetforecast-oy.crabdance.com](http://api.closetforecast-oy.crabdance.com)
+- Front-end repo: [se_project_react](https://github.com/oelctric/se_project_react)
+
 ## Functionality
 This server provides a REST API for the WTWR app, secured with JWT authentication:
 - `POST /signup` — create a new user (`name`, `avatar`, `email`, `password`)
@@ -40,4 +45,6 @@ All 102 requests in the Sprint 13 Postman test suite (authentication and authori
 ![Postman test suite results: 102 of 102 tests passed](./docs/postman-tests-sprint13.png)
 
 ## Project Pitch Video
-Check out [this video](https://drive.google.com/file/d/1wIsGt-CSAKHs0yo7ZMdc16Fy2YK2mtcp/view?usp=sharing), where I describe my project and some challenges I faced while building it.
+[Video coming soon — recording in progress]
+
+<!-- Replace with the Sprint 15 pitch video covering the full-stack project (frontend + backend) before submitting for review. -->

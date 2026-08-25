@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { errors } = require("celebrate");
 const userRouter = require("./routes/users");
 const itemRouter = require("./routes/clothingItems");
 const { login, createUser } = require("./controllers/users");
@@ -49,6 +50,8 @@ app.use((req, res, next) => {
 });
 
 app.use(errorLogger);
+
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

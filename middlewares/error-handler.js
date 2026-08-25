@@ -1,4 +1,3 @@
-const { isCelebrateError } = require("celebrate");
 const {
   BAD_REQUEST_ERROR_CODE,
   DEFAULT_ERROR_CODE,
@@ -9,13 +8,6 @@ module.exports = (err, req, res, next) => {
     return res
       .status(BAD_REQUEST_ERROR_CODE)
       .send({ message: "Invalid JSON in request body" });
-  }
-
-  if (isCelebrateError(err)) {
-    const [, joiError] = [...err.details][0];
-    return res
-      .status(BAD_REQUEST_ERROR_CODE)
-      .send({ message: joiError.message });
   }
 
   const { statusCode = DEFAULT_ERROR_CODE, message } = err;
